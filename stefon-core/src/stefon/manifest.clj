@@ -39,7 +39,8 @@
   (swap! mapping (constantly map)))
 
 (defn load! []
-  (-> (settings/manifest-file)
+  (-> (.getClass *ns*)
+      (.getResource (settings/manifest-file))
       slurp
       json/parse-string
       load-map!))
