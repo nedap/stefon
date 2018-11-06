@@ -5,6 +5,9 @@
   :url "http://github.com/circleci/stefon"
   :repositories {"snapshots" {:url "https://nedap.jfrog.io/nedap/staffing-solutions/"
                               :username :env/artifactory_user
+                              :password :env/artifactory_pass}
+                 "releases"  {:url      "https://nedap.jfrog.io/nedap/staffing-solutions/"
+                              :username :env/artifactory_user
                               :password :env/artifactory_pass}}
   :dependencies [[ring/ring-core "1.2.0"]
                  [clj-time "0.4.4"]
