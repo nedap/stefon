@@ -1,4 +1,4 @@
-(defproject com.nedap.staffing-solutions/stefon "0.5.0-SNAPSHOT"
+(defproject com.nedap.staffing-solutions/stefon "0.5.0"
   :description "Asset pipeline ring middleware"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
