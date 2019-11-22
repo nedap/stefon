@@ -1,8 +1,16 @@
-(defproject stefon "0.5.0-SNAPSHOT"
+(defproject com.nedap.staffing-solutions/stefon "0.5.1"
   :description "Asset pipeline ring middleware"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :url "http://github.com/circleci/stefon"
+  :repositories {"releases" {:url      "https://nedap.jfrog.io/nedap/staffing-solutions/"
+                             :username :env/artifactory_user
+                             :password :env/artifactory_pass}}
+  :deploy-repositories [["releases" {:url           "https://nedap.jfrog.io/nedap/staffing-solutions/"
+                                     :sign-releases false}]]
+  :repository-auth {#"https://nedap.jfrog\.io/nedap/staffing-solutions/"
+                    {:username :env/artifactory_user
+                     :password :env/artifactory_pass}}
   :dependencies [[ring/ring-core "1.2.0"]
                  [clj-time "0.4.4"]
                  [org.clojure/core.incubator "0.1.1"]
