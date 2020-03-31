@@ -1,4 +1,4 @@
-(defproject com.nedap.staffing-solutions/stefon "0.5.2-alpha1"
+(defproject com.nedap.staffing-solutions/stefon "0.5.2"
 
   :description "Asset pipeline ring middleware"
 
