@@ -1,0 +1,86 @@
+version: 2.1
+
+commands:
+  setup-env:
+    steps:
+      - checkout
+      - run: cd ~/repo/stefon-core; lein with-profile -dev,+test,+ci deps
+
+executor_defaults: &executor_defaults
+  working_directory: ~/repo
+
+executors:
+  openjdk8:
+    docker:
+      - image: circleci/clojure:openjdk-8-lein-2.9.1
+    environment:
+      LEIN_ROOT: "true"
+      JVM_OPTS: -Xmx3200m
+    <<: *executor_defaults
+  openjdk11:
+    docker:
+      - image: circleci/clojure:openjdk-11-lein-2.9.1
+    environment:
+      LEIN_ROOT: "true"
+      JVM_OPTS: -Xmx3200m --illegal-access=deny
+    <<: *executor_defaults
+
+jobs:
+  test_code:
+    description: |
+      Runs tests against given version of the JDK
+    parameters:
+      jdk_version:
+        description: Version of the JDK to test against
+        type: string
+      lein_test_command:
+        description: A Leiningen command that will run a test suite
+        type: string
+    executor: << parameters.jdk_version >>
+    steps:
+      - setup-env
+      - run:
+          command: << parameters.lein_test_command >>
+  deploy:
+    executor: openjdk8
+    steps:
+      - setup-env
+      - run:
+          name: import GPG key
+          command: echo -e "$GPG_KEY_V2" | gpg --import
+      - run:
+          name: Perform pre-release sanity check
+          command: cd ~/repo/stefon-core; lein with-profile -dev,+ci run -m nedap.ci.release-workflow.api sanity-check
+      - run:
+          name: release to JFrog
+          command: cd ~/repo/stefon-core; lein deploy
+      - run:
+          name: release to Clojars
+          command: cd ~/repo/stefon-core; lein deploy clojars
+
+test_code_filters: &test_code_filters
+  filters:
+    branches:
+      only: /.*/
+    tags:
+      only: /^v\d+\.\d+\.\d+(-alpha\d+)?$/
+
+workflows:
+  version: 2.1
+  CircleCI:
+    jobs:
+      - test_code:
+          name: "Ensure artifact isolation, inform of boxed math"
+          jdk_version: openjdk8
+          lein_test_command: cd ~/repo/stefon-core; lein with-profile -dev,+check check
+          context: JFrog
+          <<: *test_code_filters
+      - deploy:
+          context: JFrog
+          requires:
+            - "Ensure artifact isolation, inform of boxed math"
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+\.\d+\.\d+(-alpha\d+)?$/
