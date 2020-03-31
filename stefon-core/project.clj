@@ -53,6 +53,7 @@
                           :jvm-opts     ["-Dclojure.core.async.go-checking=true"
                                          "-Duser.language=en-US"]}
 
-             :ci         {:jvm-opts     ["-Dclojure.main.report=stderr"]
+             :ci         {:jvm-opts     ["-Dclojure.main.report=stderr"
+                                         "-Dnedap.ci.release-workflow.stable-branches=pristine"]
                           :global-vars  {*assert* true} ;; `ci.release-workflow` relies on runtime assertions
                           :dependencies [[com.nedap.staffing-solutions/ci.release-workflow "1.7.0-alpha3"]]}})
